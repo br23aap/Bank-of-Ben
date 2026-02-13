@@ -2,6 +2,7 @@ from datetime import datetime
 
 def login():
     
+
     while True:
         a = input("Hello welcome to Bens Bank, if you know the word please type 1, if you would like to close the program, type 3. ")
         if a == "1":
@@ -12,6 +13,7 @@ def login():
                     print("Login successful!")
                     menu = Menu()
                     menu.aMenu()
+                    
                 else:
                     print("Incorrect secret word, try again.")
         elif a == "3":
@@ -43,7 +45,7 @@ class Bank():
         self.balance -= amount
         self.save_balance(self.balance)
         return self.balance
-        
+      
     
 class TransactionHistory():
     
@@ -98,14 +100,28 @@ class Menu():
                 print(my_bank.get_balance())
                 
             elif a == "2":
-                value = float(input("How much would you like to deposit? "))
+                try:
+                    
+                    value = float(input("How much would you like to deposit? "))
+                    
+                except ValueError:
+                    print("Please input a valid number.")
+                    continue
+                
                 new_balance = my_bank.deposit(value)
                 print("Your new balance is", new_balance)
                 transaction.writeHistDepo(value,new_balance)
                 
                 
             elif a == "3":
-                value = float(input("How much would you like to withdraw? "))
+                try:
+                    
+                    value = float(input("How much would you like to withdraw? "))
+                
+                except ValueError:
+                    print("Please input a valid number.")
+                    continue
+                
                 new_balance = my_bank.withdraw(value)
                 print("Your new balance is", new_balance)
                 transaction.writeHistWith(value, new_balance)
