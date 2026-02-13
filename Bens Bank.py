@@ -44,15 +44,9 @@ def get_username_from_pin(pin):
                   return username
               
     return None
+    
 #---------------------- BANK CLASS -------------------              
 
-    
-    
-    
-    
-    
-    
-    
 class Bank():
     def __init__(self,username):
         self.username = username
@@ -84,7 +78,7 @@ class Bank():
         self.save_balance(self.balance)
         return self.balance
       
-    
+#------------- TRANSACTION CLASS ----------------
 class TransactionHistory():
               
               
@@ -122,7 +116,7 @@ class TransactionHistory():
         with open(self.filename, "a") as f:
             f.write(f"{typen:<10}{amount:>10}{timestamp:>25}{balance:>15}\n")
 
-#Menu
+#------------------- MENU CLASS -------------------
 
 class Menu():
     
@@ -130,7 +124,6 @@ class Menu():
         self.bank = bank
         self.transaction = transaction
         self.user_inactive = False
-        
     
     def aMenu(self):
         while not self.user_inactive:
@@ -186,3 +179,4 @@ class Menu():
                 print("invalid input")
 
 login()
+
