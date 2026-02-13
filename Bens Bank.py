@@ -1,4 +1,5 @@
 from datetime import datetime
+import os
 
 def login():
     
@@ -8,29 +9,66 @@ def login():
         if a == "1":
             user = input ("Please type your secret word ")
             with open("pass.txt", "r") as f:
-                correct_password = f.read().strip()  
-                if user == correct_password:
-                    print("Login successful!")
-                    menu = Menu()
-                    menu.aMenu()
+                correct_password = f.read().strip()
+                
+            if user == correct_password:
+                
                     
+                pin = input("Enter your PIN: ")
+                username = get_username_from_pin(pin)
+                    
+                if username:
+                    print("Login succesful!")
+                        
+                    my_bank = Bank(username)
+                    transaction = TransactionHistory(username)
+                        
+                    menu = Menu(my_bank,transaction)
+                    menu.aMenu()
                 else:
-                    print("Incorrect secret word, try again.")
+                    print("Invalid PIN.")
+                    
+            else:
+                print("Incorrect secret word, try again.")
         elif a == "3":
             print("Exiting program.")
             break  
         else:
             print("Invalid input, try again.")
 
+def get_username_from_pin(pin):
+    with open("users.txt", "r") as f:
+            for line in f:
+              username, stored_pin = line.strip().split(",")
+              if pin == stored_pin:
+                  return username
+              
+    return None
+#---------------------- BANK CLASS -------------------              
 
+    
+    
+    
+    
+    
+    
+    
 class Bank():
+    def __init__(self,username):
+        self.username = username
+        self.filename = f"{username}_bank.txt"
+    
+        if not os.path.exists(self.filename):
+            with open(self.filename, "w") as f:
+                f.write("0")
+                
     def get_balance(self):
-        with open("bank.txt", "r") as f:
+        with open(self.filename, "r") as f:
             return float(f.read())
             
         
     def save_balance(self,balance):
-        with open("bank.txt", "w") as f:
+        with open(self.filename, "w") as f:
             f.write(str(balance))
         
         
@@ -48,14 +86,22 @@ class Bank():
       
     
 class TransactionHistory():
-    
+              
+              
+    def __init__(self,username):
+        self.username = username
+        self.filename = f"{username}_th.txt"
+        
+        if not os.path.exists(self.filename):
+            with open(self.filename, "w") as f:
+                f.write("Type       Amount               Timestamp        Balance\n")
     def time(self):
         now = datetime.now()                 
         formatted = now.strftime("%Y-%m-%d %H:%M:%S")  
         return formatted
     
     def readHistory(self):
-        with open("th.txt", "r") as f:
+        with open(self.filename, "r") as f:
             return str(f.read())
     
     def writeHistDepo(self,balance,new_balance):
@@ -64,7 +110,7 @@ class TransactionHistory():
         timestamp = self.time()
         balance = new_balance
         
-        with open("th.txt", "a") as f:
+        with open(self.filename, "a") as f:
             f.write(f"{typen:<10}{amount:>10}{timestamp:>25}{balance:>15}\n")
             
     def writeHistWith(self,balance,new_balance):
@@ -73,18 +119,18 @@ class TransactionHistory():
         timestamp = self.time()
         balance = new_balance
         
-        with open("th.txt", "a") as f:
+        with open(self.filename, "a") as f:
             f.write(f"{typen:<10}{amount:>10}{timestamp:>25}{balance:>15}\n")
-                
-my_bank = Bank()
-transaction = TransactionHistory()
 
 #Menu
 
 class Menu():
     
-    def __init__(self):
+    def __init__(self, bank, transaction):
+        self.bank = bank
+        self.transaction = transaction
         self.user_inactive = False
+        
     
     def aMenu(self):
         while not self.user_inactive:
@@ -97,7 +143,7 @@ class Menu():
             a = input("... ")
 
             if a == "1":
-                print(my_bank.get_balance())
+                print(self.bank.get_balance())
                 
             elif a == "2":
                 try:
@@ -108,9 +154,9 @@ class Menu():
                     print("Please input a valid number.")
                     continue
                 
-                new_balance = my_bank.deposit(value)
+                new_balance = self.bank.deposit(value)
                 print("Your new balance is", new_balance)
-                transaction.writeHistDepo(value,new_balance)
+                self.transaction.writeHistDepo(value,new_balance)
                 
                 
             elif a == "3":
@@ -122,18 +168,18 @@ class Menu():
                     print("Please input a valid number.")
                     continue
                 
-                new_balance = my_bank.withdraw(value)
+                new_balance = self.bank.withdraw(value)
                 print("Your new balance is", new_balance)
-                transaction.writeHistWith(value, new_balance)
+                self.transaction.writeHistWith(value, new_balance)
                 
             elif a == "4":
                 self.user_inactive = True
                 
             elif a == "5":
-                print(transaction.readHistory())
+                print(self.transaction.readHistory())
                 
             elif a == "6":
-                with open("th.txt", "w") as f:
+                with open(self.transaction.filename, "w") as f:
                     f.write(str("Start of transaction history" "\n"))
                 
             else:
