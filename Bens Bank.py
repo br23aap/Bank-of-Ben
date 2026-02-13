@@ -56,47 +56,58 @@ class TransactionHistory():
                 
                 
         
-user_inactive = False
+
 my_bank = Bank()
 transaction = TransactionHistory()
+
+
 #Menu
 
-while not user_inactive:
-    print ("Option 1, view balance ")
-    print ("Option 2, deposit ")
-    print ("Option 3, withdraw ")
-    print ("Option 4, exit ")
-    print ("Option 5, read transaction history ")
-    print ("Option 6, wipe transaction history ")
-    a = input("... ")
 
-    if a == "1":
-        print(my_bank.get_balance())
-        
-    elif a == "2":
-        value = float(input("How much would you like to deposit? "))
-        new_balance = my_bank.deposit(value)
-        print("Your new balance is", new_balance)
-        transaction.writeHistDepo(value,new_balance)
-        
-        
-    elif a == "3":
-        value = float(input("How much would you like to withdraw? "))
-        new_balance = my_bank.withdraw(value)
-        print("Your new balance is", new_balance)
-        transaction.writeHistWith(value, new_balance)
-        
-    elif a == "4":
-        user_inactive = True
-        
-    elif a == "5":
-        print(transaction.readHistory())
-        
-    elif a == "6":
-        with open("th.txt", "w") as f:
-            f.write(str("Start of transaction history" "\n"))
-        
-    else:
-        print("invalid input")
 
+class Menu():
+    
+    def __init__(self):
+        self.user_inactive = False
+    
+    def aMenu(self):
+        while not self.user_inactive:
+            print ("Option 1, view balance ")
+            print ("Option 2, deposit ")
+            print ("Option 3, withdraw ")
+            print ("Option 4, exit ")
+            print ("Option 5, read transaction history ")
+            print ("Option 6, wipe transaction history ")
+            a = input("... ")
+
+            if a == "1":
+                print(my_bank.get_balance())
+                
+            elif a == "2":
+                value = float(input("How much would you like to deposit? "))
+                new_balance = my_bank.deposit(value)
+                print("Your new balance is", new_balance)
+                transaction.writeHistDepo(value,new_balance)
+                
+                
+            elif a == "3":
+                value = float(input("How much would you like to withdraw? "))
+                new_balance = my_bank.withdraw(value)
+                print("Your new balance is", new_balance)
+                transaction.writeHistWith(value, new_balance)
+                
+            elif a == "4":
+                self.user_inactive = True
+                
+            elif a == "5":
+                print(transaction.readHistory())
+                
+            elif a == "6":
+                with open("th.txt", "w") as f:
+                    f.write(str("Start of transaction history" "\n"))
+                
+            else:
+                print("invalid input")
+menu = Menu()
+menu.aMenu()
 
