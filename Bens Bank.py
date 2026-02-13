@@ -1,5 +1,52 @@
 from datetime import datetime
 import os
+import hashlib
+
+
+def openingMenu():
+    while True:
+        k = input("Type 1 if you have an account, 2 if you want to create one, 3 to exit program ")
+        if k == "1":
+            login()
+            
+        elif k == "2":
+            createAccount()
+
+            
+        elif k == "3":
+            print("Exiting program.")
+            break
+        
+        else: print("Invalid input")
+
+
+
+def createAccount():
+    username = input("What is your username? ")
+    
+    if os.path.exists("users.txt"):
+        with open("users.txt", "r") as f:
+            for line in f:
+                existing_user = line.strip().split(",")[0]
+                if username == existing_user:
+                    print("Username already exists.")
+                    return
+    pin = input("What do you want your PIN to be (4 digits)? ")
+    
+    hashed_pin = hash_text(pin)
+    
+    with open ("users.txt", "a") as f:
+        f.write(f"{username},{hashed_pin}\n")
+        
+    print("Account created succesfully!")
+        
+
+
+def hash_text(text):
+    return hashlib.sha256(text.encode()).hexdigest()
+
+
+
 
 def login():
     
@@ -11,8 +58,8 @@ def login():
             with open("pass.txt", "r") as f:
                 correct_password = f.read().strip()
                 
-            if user == correct_password:
-                
+            if hash_text(user) == correct_password:
+                print("Correct secret word! ")
                     
                 pin = input("Enter your PIN: ")
                 username = get_username_from_pin(pin)
@@ -37,10 +84,11 @@ def login():
             print("Invalid input, try again.")
 
 def get_username_from_pin(pin):
+    hashed_pin = hash_text(pin)
     with open("users.txt", "r") as f:
             for line in f:
               username, stored_pin = line.strip().split(",")
-              if pin == stored_pin:
+              if hashed_pin == stored_pin:
                   return username
               
     return None
@@ -178,5 +226,4 @@ class Menu():
             else:
                 print("invalid input")
 
-login()
-
+openingMenu()
