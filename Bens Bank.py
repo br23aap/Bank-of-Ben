@@ -1,5 +1,26 @@
 from datetime import datetime
 
+def login():
+    
+    while True:
+        a = input("Hello welcome to Bens Bank, if you know the word please type 1, if you would like to close the program, type 3. ")
+        if a == "1":
+            user = input ("Please type your secret word ")
+            with open("pass.txt", "r") as f:
+                correct_password = f.read().strip()  
+                if user == correct_password:
+                    print("Login successful!")
+                    menu = Menu()
+                    menu.aMenu()
+                else:
+                    print("Incorrect secret word, try again.")
+        elif a == "3":
+            print("Exiting program.")
+            break  
+        else:
+            print("Invalid input, try again.")
+
+
 class Bank():
     def get_balance(self):
         with open("bank.txt", "r") as f:
@@ -22,8 +43,7 @@ class Bank():
         self.balance -= amount
         self.save_balance(self.balance)
         return self.balance
-    
-    
+        
     
 class TransactionHistory():
     
@@ -54,16 +74,10 @@ class TransactionHistory():
         with open("th.txt", "a") as f:
             f.write(f"{typen:<10}{amount:>10}{timestamp:>25}{balance:>15}\n")
                 
-                
-        
-
 my_bank = Bank()
 transaction = TransactionHistory()
 
-
 #Menu
-
-
 
 class Menu():
     
@@ -108,6 +122,5 @@ class Menu():
                 
             else:
                 print("invalid input")
-menu = Menu()
-menu.aMenu()
 
+login()
